@@ -17,10 +17,25 @@ if (id) {
   req.user = id
   next()
 } else {
-  res.status(500).json({message: "Invalid user id"})
+  res.status(400).json({message: "Invalid user id"})
 }
 });
 
+function validateUser(req, res, next) {
+  console.log(Object.keys(req.body).length)
+  const bodyLength = Object.keys(req.body);
+  const username = req.body;
+  if (req.body && req.body.name) {
+    next();
+  }
+  if (bodyLength.length <= 0)  {
+    res.status(400).json({message: 'no data'})
+  }
+  if ( !username.name ) {
+    res.status(400).json({message: 'no name'})
+  }
+  
+}
 
 server.get('/', (req, res) => {
   res.send(`<h2>Let's write some middleware!</h2>`)
@@ -39,8 +54,6 @@ server.get('/users', (req, res) => {
 server.get('/users/:id', validateUserId, async (req, res) => {
   try {
     const user = await Users.getById(req.params.id);
-
-    
       res.status(200).json(user);
     
   } catch (error) {
@@ -51,6 +64,20 @@ server.get('/users/:id', validateUserId, async (req, res) => {
     });
   }
 });
+
+server.post('/users', validateUser, async(req, res) => {
+  try {
+    const user = await Users.insert(req.body);
+    res.status(201).json(user);
+  } catch (error) {
+    // log error to server
+    console.log(error);
+    res.status(500).json({
+      message: 'Error adding the user',
+    });
+  }
+})
+
 
 function logger(req, res, next) {
   console.log(`${req.method} was requested at ${req.url} on [${new Date().toISOString()}]`)
