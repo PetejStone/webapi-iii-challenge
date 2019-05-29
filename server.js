@@ -1,4 +1,5 @@
-const express = 'express';
+
+const express = require('express'); // importing a CommonJS module
 
 const server = express();
 
@@ -9,7 +10,8 @@ server.get('/', (req, res) => {
 //custom middleware
 
 function logger(req, res, next) {
-
+  console.log(`${req.method} was requested at ${req.url} on ${Date().toISOString()}`)
 };
+
 
 module.exports = server;
