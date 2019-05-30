@@ -6,12 +6,14 @@ const userRouter = require('./users/userRouter.js')
 const server = express();
 
 //global middleware
+
 server.use(express.json());
 server.use(helmet());
 server.use(logger)
+const cors = require('cors');
 
 server.use('/api/users',  userRouter);
-
+server.use(cors());
 server.get('/', (req, res) => {
   res.send(`<h2>Let's write some middleware!</h2>`)
 });
